@@ -1,0 +1,337 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Infor Workforce Management Public API",
+    "version" : "2"
+  },
+  "servers" : [ {
+    "url" : "/services/api"
+  } ],
+  "security" : [ {
+    "OAuthToken" : [ ]
+  } ],
+  "paths" : {
+    "/services/api/public/v2/clocks/accepted-swipes" : {
+      "get" : {
+        "tags" : [ "clocks" ],
+        "summary" : "Gets accepted swipes",
+        "description" : "Gets accepted swipes. Swipes are ordered in descending order of swipe ids",
+        "operationId" : "getLastAcceptedSwipes",
+        "parameters" : [ {
+          "name" : "employee-name",
+          "in" : "query",
+          "description" : "Name of the employee. If this is missing swipes for all employees will be returned",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "swipe-type",
+          "in" : "query",
+          "description" : "Array of swipe types as described in SwipeDto. If this is missing or empty all swipe types will be returned",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "cursor",
+          "in" : "query",
+          "description" : "A cursor obtained from previous request to this API. If this is missing returns all swipes from the start.",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Maximum number of swipes to return.",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedResponseWithSwipeDto"
+                }
+              }
+            }
+          },
+          "204" : {
+            "description" : "No swipes found because employee does not exist or swipes do not exist for the employee"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "clocks" ],
+        "summary" : "Create an accepted swipe",
+        "operationId" : "submit_accepted_swipe",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SwipeDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Resource Added"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    },
+    "/services/api/public/v2/clocks/rejected-swipes" : {
+      "post" : {
+        "tags" : [ "clocks" ],
+        "summary" : "Creates a rejected swipe",
+        "operationId" : "submit_rejected_swipe",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RejectedSwipeDto"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Resource Added"
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "GeoLocationDto" : {
+        "required" : [ "latitude", "longitude" ],
+        "type" : "object",
+        "properties" : {
+          "latitude" : {
+            "type" : "number",
+            "description" : "Latitude of the location ",
+            "format" : "double",
+            "example" : 35.7795897
+          },
+          "longitude" : {
+            "type" : "number",
+            "description" : "Longitude of the location",
+            "format" : "double",
+            "example" : -78.6381787
+          }
+        },
+        "description" : "Geo location of the reader where the swipe was done."
+      },
+      "SwipeDto" : {
+        "required" : [ "employeeName", "extraData", "readerName", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "Identifies this object",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "employeeName" : {
+            "type" : "string",
+            "description" : "Identifies employee who performed the swipe"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Identifies swipe type. These are the types that affect time sheet.  \"01\" (IN), \"02\" (OUT), \"03\" (JOB change), \"04\" (Docket change), \"06\" (Time code change), \"07\" (Department change), \"08\" (Project change), \"09\" docket change when time spent on the docket is known also knokwn as timesheet swipe.  \"11\" (Directionless). There are also other types which do not affect time sheet and depend on the clock configuration."
+          },
+          "time" : {
+            "$ref" : "#/components/schemas/SwipeTimeDto"
+          },
+          "readerName" : {
+            "type" : "string",
+            "description" : "Name of the reader where the swipe was done"
+          },
+          "readerIpAddress" : {
+            "type" : "string",
+            "description" : "IP address of the reader where the swipe was done."
+          },
+          "readerGeoLocation" : {
+            "$ref" : "#/components/schemas/GeoLocationDto"
+          },
+          "departmentName" : {
+            "type" : "string",
+            "description" : "Name of the department. Required if the swipe type is department change."
+          },
+          "docketName" : {
+            "type" : "string",
+            "description" : "Name of the docket. Required if the swipe type is docket change (04) or time sheet(09)"
+          },
+          "docketTime" : {
+            "type" : "integer",
+            "description" : "Time spent on the docket in minutes. Required if swipe type is time sheet (09)",
+            "format" : "int32"
+          },
+          "docketQuantity" : {
+            "type" : "integer",
+            "description" : "Quantity of items in the docket",
+            "format" : "int32"
+          },
+          "jobName" : {
+            "type" : "string",
+            "description" : "Name of the job. Required if the swipe type is job change."
+          },
+          "projectName" : {
+            "type" : "string",
+            "description" : "Name of the project. Required if the swipe type is project change."
+          },
+          "timeCodeName" : {
+            "type" : "string",
+            "description" : "Name of the time code. Required if the swipe type is time code change."
+          },
+          "extraData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "description" : "Contains name value pairs for data captured at the clocks that are not accommodated by other fields."
+            },
+            "description" : "Contains name value pairs for data captured at the clocks that are not accommodated by other fields."
+          }
+        }
+      },
+      "SwipeTimeDto" : {
+        "required" : [ "utcTime" ],
+        "type" : "object",
+        "properties" : {
+          "utcTime" : {
+            "type" : "string",
+            "description" : "Time in UTC when the time was captured",
+            "format" : "date-time"
+          },
+          "timezoneName" : {
+            "type" : "string",
+            "description" : "Java name of the time zone where time was captured"
+          }
+        },
+        "description" : "UTC time when the swipe was done with optional time zone of the reader"
+      },
+      "MetadataDto" : {
+        "type" : "object",
+        "properties" : {
+          "nextCursor" : {
+            "type" : "string"
+          },
+          "limit" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PagedResponseWithSwipeDto" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SwipeDto"
+            }
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/MetadataDto"
+          }
+        }
+      },
+      "RejectedSwipeDto" : {
+        "required" : [ "employeeName", "extraData", "readerName", "reason", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "Identifies this object",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "employeeName" : {
+            "type" : "string",
+            "description" : "Identifies employee who performed the swipe"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Identifies swipe type. These are the types that affect time sheet.  \"01\" (IN), \"02\" (OUT), \"03\" (JOB change), \"04\" (Docket change), \"06\" (Time code change), \"07\" (Department change), \"08\" (Project change), \"09\" docket change when time spent on the docket is known also knokwn as timesheet swipe.  \"11\" (Directionless). There are also other types which do not affect time sheet and depend on the clock configuration."
+          },
+          "time" : {
+            "$ref" : "#/components/schemas/SwipeTimeDto"
+          },
+          "readerName" : {
+            "type" : "string",
+            "description" : "Name of the reader where the swipe was done"
+          },
+          "readerIpAddress" : {
+            "type" : "string",
+            "description" : "IP address of the reader where the swipe was done."
+          },
+          "readerGeoLocation" : {
+            "$ref" : "#/components/schemas/GeoLocationDto"
+          },
+          "departmentName" : {
+            "type" : "string",
+            "description" : "Name of the department. Required if the swipe type is department change."
+          },
+          "docketName" : {
+            "type" : "string",
+            "description" : "Name of the docket. Required if the swipe type is docket change (04) or time sheet(09)"
+          },
+          "docketTime" : {
+            "type" : "integer",
+            "description" : "Time spent on the docket in minutes. Required if swipe type is time sheet (09)",
+            "format" : "int32"
+          },
+          "docketQuantity" : {
+            "type" : "integer",
+            "description" : "Quantity of items in the docket",
+            "format" : "int32"
+          },
+          "jobName" : {
+            "type" : "string",
+            "description" : "Name of the job. Required if the swipe type is job change."
+          },
+          "projectName" : {
+            "type" : "string",
+            "description" : "Name of the project. Required if the swipe type is project change."
+          },
+          "timeCodeName" : {
+            "type" : "string",
+            "description" : "Name of the time code. Required if the swipe type is time code change."
+          },
+          "extraData" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "description" : "Contains name value pairs for data captured at the clocks that are not accommodated by other fields."
+            },
+            "description" : "Contains name value pairs for data captured at the clocks that are not accommodated by other fields."
+          },
+          "reason" : {
+            "type" : "string",
+            "description" : "Reason for rejecting the swipe"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "OAuthToken" : {
+        "type" : "apiKey",
+        "name" : "Authorization",
+        "in" : "header"
+      }
+    }
+  }
+}
