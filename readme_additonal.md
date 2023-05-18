@@ -27,7 +27,7 @@ git add .
 
 git commit -am "make it better"
 
-**Push the changes to the remote repository on Heroku:**
+**Push the changes to the remote repository on Heroku.  Need to log in to Linux (WSL):**
 
 heroku login
 
