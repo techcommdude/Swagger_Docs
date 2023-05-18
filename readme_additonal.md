@@ -34,3 +34,5 @@ heroku login
 git push heroku master
 
 Note: the branch could also be called "main" in Git.
+
+**Enter 'exit' to quit Ubuntu.**
