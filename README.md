@@ -1,8 +1,8 @@
 # Swagger documentation portfolio
 
-A Twitter-like social network website for making posts and following users.
+To do.
 
-This project is deployed on Heroku (please have patience since the instance is likely sleeping but will wake up after a few seconds): <a href="https://farnellg-social-network.herokuapp.com/">https://farnellg-social-network.herokuapp.com/</a>
+This project is deployed on Heroku (please have patience since the instance is likely sleeping but will wake up after a few seconds): <a href="https://swagger-docs.herokuapp.com/dist_wfm">https://swagger-docs.herokuapp.com/dist_wfm</a>
 
 Here's a brief screencast of the Swagger docs in this repository:
 
@@ -22,4 +22,4 @@ Some of the technologies I used when building this documentation:
 -----------
 ## Project overview
 
-This demo application completed the requirements below using JavaScript, Django/Python, HTML, and CSS:
+To do.
