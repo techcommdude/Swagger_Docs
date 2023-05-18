@@ -36,3 +36,7 @@ git push heroku master
 Note: the branch could also be called "main" in Git.
 
 **Enter 'exit' to quit Ubuntu.**
+
+#######################
+
+The websites can be tested with Apache Tomcat, just dump the folders into the Root directory of Apache Tomcat and then you can display the site on http://localhost:8081/dist_wfm, for example.  Will need to change the URL in swagger-initializer.js to make it display properly.
