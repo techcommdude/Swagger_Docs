@@ -3,7 +3,7 @@ window.onload = function() {
 
   // the following lines will be replaced by docker/configurator, when it runs in a docker-container
   window.ui = SwaggerUIBundle({
-    url: "http://localhost:8081/dist_openweatherapi/open_weather_api.json",
+    url: "http://swagger-docs.herokuapp.com/dist_openweatherapi/open_weather_api.json",
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
