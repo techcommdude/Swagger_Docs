@@ -3,7 +3,7 @@ window.onload = function() {
 
   // the following lines will be replaced by docker/configurator, when it runs in a docker-container
   window.ui = SwaggerUIBundle({
-    url: "http://localhost:8081/dist_wfm/wfm_2022.09.00_OpenApi-V1.json",
+    url: "https://swagger-docs.herokuapp.com/dist_wfm/wfm_2022.09.00_OpenApi-V1.json",
     dom_id: '#swagger-ui',
     deepLinking: true,
     supportedSubmitMethods: [],
